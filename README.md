@@ -16,13 +16,13 @@ In order to support learning the basics of Containerization principles and start
 **Write the code first!**
 
 Config:
-> `my_deployer config <REMOTE_IP>`
+> `my_deployer config <SSH_REMOTE_URL>`
 
 Build:
-> `my_deployer build <REMOTE_IP> [<SERVICE>]...`
+> `my_deployer build <SSH_REMOTE_URL> [<SERVICE>]...`
 
 Deploy:
-> `my_deployer deploy <REMOTE_IP> <SERVICE>...`
+> `my_deployer deploy <SSH_REMOTE_URL> <SERVICE>...`
 
 Healthcheck:
 > `my_deployer healthcheck <REMOTE_IP> [<SERVICE>]...`
@@ -33,7 +33,7 @@ Healthcheck:
 ### Communication
 
 With the host:
-- [ ] Access a remote host using SSH
+- [x] Access a remote host using SSH
 
 With the user:
 - [ ] Provide a friendly logging interface
@@ -43,7 +43,7 @@ With the user:
 
 > Ensure Docker is installed and at the expected version on a remote host.
 
-- [ ] Enquire about the currently installed Docker version, if any
+- [x] Enquire about the currently installed Docker version, if any
 - [ ] Install or upgrade Docker to expected version if necessary
 - [ ] \(_optional): Display informations about the Docker configuration_
 
