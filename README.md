@@ -34,9 +34,10 @@ Healthcheck:
 
 With the host:
 - [x] Access a remote host using SSH
+- [x] Connect to the remote Docker client
 
 With the user:
-- [ ] Provide a friendly logging interface
+- [x] Provide a friendly logging interface
 - [ ] \(_optional): Enable a verbose mode (0 or 1) to display remote log_
 
 ### Config
@@ -44,17 +45,13 @@ With the user:
 > Ensure Docker is installed and at the expected version on a remote host.
 
 - [x] Enquire about the currently installed Docker version, if any
-- [ ] Install or upgrade Docker to expected version if necessary
+- [x] Install or upgrade Docker to expected version if necessary
 - [ ] \(_optional): Display informations about the Docker configuration_
 
 ### Build
 
 > Provide a simple way of building Docker images on a remote host
 
-- [ ] Ensure the directory contains the necessary files (Dockerfile)
-- [ ] \(_optional): Create a temporary working directory (`/tmp/my-deployer-{uid}`)_
-- [ ] Copy the corresponding directory to the remote host
-- [ ] \(_optional): Cleanup temporary working directory_
 - [ ] Build the Docker image with the corresponding values
 - [ ] \(_optional): Generate some metadatas and display them_
 
