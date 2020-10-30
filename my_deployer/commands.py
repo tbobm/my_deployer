@@ -6,6 +6,8 @@ The program must implement the following:
     deploy: Run the <service> on the remote host
     healthcheck: Enquire about the remote container statuses
 """
+from pathlib import Path
+
 import click
 
 from my_deployer.logs import build_logger
@@ -47,12 +49,19 @@ def config(hostname: str, port: int, username: str, password: str):
 @click.argument("url", type=str)
 @click.argument("service", type=str)
 @click.option("--name", type=str, required=False)
-@click.option("--tag", type=str, required=False)
+@click.option("--tag", type=str, required=False, default='latest')
 def build(url: str, service: str, name: str = None, tag: str = 'latest'):
     """Build the Service on the remote host."""
+    # TODO: Add progressbar
+    logger = build_logger('main')
+    # TODO: Add DockerInfos structure to display host
     docker_operator = DockerOperator(url)
+    logger.info('ping remote target')
     docker_operator.client.ping()
+    logger.info('remote target answered ping')
+    # TODO: Build multiple services
+    service_path = Path(service)
     if name is None:
-        name = service
-        print(f"using default name={service}")
-    docker_operator.build_image(service, name, tag=tag)
+        name = service_path.absolute().name
+        logger.info("using default name=%s", name)
+    docker_operator.build_service(service_path, name, tag=tag)
