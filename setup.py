@@ -23,7 +23,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "my_deployer-manager=my_deployer.client:run_cli",
+            "my_deployer=my_deployer.client:run_cli",
         ],
     },
 )
