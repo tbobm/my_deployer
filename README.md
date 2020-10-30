@@ -52,7 +52,7 @@ With the user:
 
 > Provide a simple way of building Docker images on a remote host
 
-- [ ] Build the Docker image with the corresponding values
+- [x] Build the Docker image with the corresponding values
 - [ ] \(_optional): Generate some metadatas and display them_
 
 ### Deploy
