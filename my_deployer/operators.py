@@ -2,6 +2,7 @@
 import logging
 import time
 from typing import Optional, Tuple
+from pathlib import Path
 
 import docker
 import paramiko
@@ -93,9 +94,12 @@ class DockerOperator:
             self.logger = build_logger(self.__class__.__name__)
         self.logger.info('setup DockerClient')
 
-    def build_image(self, path: str, name: str, tag: str = 'latest'):
+    def build_service(self, path: Path, name: str, tag: str = 'latest'):
         """Build the Docker image using self.client."""
-        self.client.images.build(path=path, tag=f"{name}:{tag}")
+        self.logger.info('building from %s with %s:%s', path, name, tag)
+        image, _ = self.client.images.build(path=path, tag=f"{name}:{tag}")
+        self.logger.info('successfully built service %s:%s (%s)', name, tag, image.id)
+        self.logger.info('image=%s size=%d bytes', image.short_id, image.attrs.get('Size'))
 
     def run_container(self, image_name: str, image_tag: str = 'latest'):
         """Run the container on the remote host."""
