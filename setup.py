@@ -10,7 +10,7 @@ URL = "https://github.com/tbobm/my_deployer/archive/{}.tar.gz".format(__version_
 setup(
     name="my_deployer",
     packages=["my_deployer"],
-    install_requires=['click'],
+    install_requires=['click', 'docker', 'paramiko'],
     version=__version__,
     description="A lightweight container deployment solution, written in Python",
     author="Theo 'Bob' Massard",
