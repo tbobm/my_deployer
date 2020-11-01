@@ -106,7 +106,6 @@ def deploy(url: str, services: str, tag: str = 'latest'):
     logger.info('remote hostname=%s', infos.hostname)
     docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
-    # TODO: Build multiple services
     for service in services:
         service_path = Path(service).absolute()
         image_name = service_path.name
@@ -129,7 +128,6 @@ def deploy(url: str, services: str, tag: str = 'latest'):
 )
 def healthcheck(url: str, services: str, restart: bool = False):
     """Ensure the running containers are healthy."""
-    # TODO: Add progressbar
     logger = build_logger('main')
     infos = DockerInfos(url)
     logger.info('remote hostname=%s', infos.hostname)
