@@ -72,6 +72,7 @@ def config(hostname: str, port: int, username: str, password: str):
     help='Remote image tag for service(s) to build.',
     required=False,
     default='latest',
+    show_default=True,
 )
 def build(url: str, services: str, tag: str = 'latest'):
     """Build the Service on the remote host."""

@@ -11,6 +11,14 @@ In order to support learning the basics of Containerization principles and start
 - Enable upgrading remote containers and reverting failing deployments
 - Verify running container healthchecks and restart them if necessary
 
+## Example
+
+```bash
+my_deployer config localhost --port 2222 --username vagrant
+my_deployer build ssh://vagrant@localhost:2222 examples/hello-world --tag 1.0
+my_deployer deploy ssh://vagrant@localhost:2222 examples/hello-world --tag 1.0
+```
+
 ## Usage
 
 ```
@@ -31,6 +39,11 @@ Commands:
 
 
 ### Config:
+
+The `config` command will:
+- SSH using the given arguments
+- Install or update Docker on the remote host
+
 ```
 my_deployer config --help
 Usage: my_deployer config [OPTIONS] HOSTNAME
@@ -44,7 +57,13 @@ Options:
   --help           Show this message and exit.
 ```
 
-Build:
+### Build:
+
+The `build` command will:
+- Connect to the Docker socket through the `url` (i.e.: `ssh`-based URL)
+- Build a Docker image on the remote host
+- Tag this image using if the corresponding flag is set
+
 ```
 my_deployer build --help
 Usage: my_deployer build [OPTIONS] URL [SERVICES]...
@@ -56,7 +75,14 @@ Options:
   --help      Show this message and exit.
 ```
 
-Deploy:
+### Deploy:
+
+The `deploy` command will:
+- Look for existing services
+- Stop these services
+- Try to run a container using the service image with the given tag if specified
+- Restore or remove the previous containers if any
+
 ```
 my_deployer deploy --help
 Usage: my_deployer deploy [OPTIONS] URL [SERVICES]...
@@ -68,7 +94,12 @@ Options:
   --help      Show this message and exit.
 ```
 
-Healthcheck:
+### Healthcheck:
+
+The `healthcheck` command will:
+- List every container's healthcheck if any
+- Restart every unhealthy container if asked
+
 ```
 my_deployer healthcheck --help
 Usage: my_deployer healthcheck [OPTIONS] URL [SERVICES]...
@@ -81,7 +112,7 @@ Options:
 ```
 
 
-## Features
+## Tasks
 
 ### Communication
 
