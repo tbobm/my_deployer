@@ -228,3 +228,30 @@ class DockerOperator:
         self.handle_old_containers(containers, success)
 
         return container
+
+    def list_healthy_containers(self, restart_unhealthy: bool = False):
+        """List every container and display it's healthiness.
+
+        If `restart_unhealthy` is specified and True, restart unhealthy containers.
+        """
+        # TODO: limit to specific SERVICE[S] if specified
+        containers = self.client.containers.list()
+        for container in containers:
+            health_attr = container.attrs.get('State').get('Health', None)
+            if not health_attr:
+                self.logger.info(
+                    'container %s (image=%s) does not have a healtcheck',
+                    container.name,
+                    container.image.tags[0],
+                )
+                continue
+            status = health_attr.get('Status')
+            self.logger.info(
+                'container %s (image=%s) is %s',
+                container.name,
+                container.image.tags[0],
+                status,
+            )
+            if restart_unhealthy and status.lower() in ['unhealthy']:
+                self.logger.info('restarting %s...', container.id)
+                container.restart()

@@ -69,5 +69,5 @@ With the user:
 
 > Verify running container healthchecks and restart them if necessary
 
-- [ ] List every container's healthcheck status
-- [ ] If specified, restart the unhealthy containers
+- [x] List every container's healthcheck status
+- [x] If specified, restart the unhealthy containers

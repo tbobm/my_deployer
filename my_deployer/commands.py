@@ -17,9 +17,26 @@ from my_deployer.structs import DockerInfos, SSHInfos
 
 @click.command()
 @click.argument("hostname", type=str)
-@click.option("--port", type=int, required=False, default=22)
-@click.option("--username", type=str, required=False)
-@click.option("--password", type=str, required=False)
+@click.option(
+    "--port",
+    type=int,
+    help='SSH port to use.',
+    show_default=True,
+    required=False,
+    default=22,
+)
+@click.option(
+    "--username",
+    help='Remote user username if required.',
+    type=str,
+    required=False,
+)
+@click.option(
+    "--password",
+    help='Remote user password if required.',
+    type=str,
+    required=False,
+)
 def config(hostname: str, port: int, username: str, password: str):
     """Configure Docker on the remote host."""
     logger = build_logger('main')
@@ -49,7 +66,13 @@ def config(hostname: str, port: int, username: str, password: str):
 @click.command()
 @click.argument("url", type=str)
 @click.argument("services", type=str, nargs=-1)
-@click.option("--tag", type=str, required=False, default='latest')
+@click.option(
+    "--tag",
+    type=str,
+    help='Remote image tag for service(s) to build.',
+    required=False,
+    default='latest',
+)
 def build(url: str, services: str, tag: str = 'latest'):
     """Build the Service on the remote host."""
     # TODO: Add progressbar
@@ -67,7 +90,14 @@ def build(url: str, services: str, tag: str = 'latest'):
 @click.command()
 @click.argument("url", type=str)
 @click.argument("services", type=str, nargs=-1)
-@click.option("--tag", type=str, required=False, default='latest')
+@click.option(
+    "--tag",
+    type=str,
+    help='Remote image tag for service(s) to deploy.',
+    required=False,
+    show_default=True,
+    default='latest',
+)
 def deploy(url: str, services: str, tag: str = 'latest'):
     """Deploy the Service on the remote host."""
     # TODO: Add progressbar
@@ -89,7 +119,15 @@ def deploy(url: str, services: str, tag: str = 'latest'):
 @click.command()
 @click.argument("url", type=str)
 @click.argument("services", type=str, nargs=-1)
-def healthcheck(url: str, services: str):
+@click.option(
+    "--restart",
+    type=bool,
+    help='Restart unhealthy containers.',
+    default=False,
+    is_flag=True,
+    show_default=True,
+)
+def healthcheck(url: str, services: str, restart: bool = False):
     """Ensure the running containers are healthy."""
     # TODO: Add progressbar
     logger = build_logger('main')
@@ -97,5 +135,4 @@ def healthcheck(url: str, services: str):
     logger.info('remote hostname=%s', infos.hostname)
     docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
-    for service in services:
-        pass
+    docker_operator.list_healthy_containers(restart)
