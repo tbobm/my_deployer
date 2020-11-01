@@ -183,8 +183,7 @@ class DockerOperator:
 
     def run_container(self,
                       image_name: str,
-                      image_tag: str = 'latest',
-                      container_name: Optional[str] = None) -> Optional[Container]:
+                      image_tag: str = 'latest',) -> Optional[Container]:
         """Run the container on the remote host.
 
         - Look for existing containers (looking for similar `image_name`)
@@ -211,7 +210,6 @@ class DockerOperator:
             container = self.client.containers.run(
                 target_image,
                 detach=True,
-                name=container_name,
                 labels=container_labels,
             )  # type: Container
             self.logger.info(
@@ -225,7 +223,7 @@ class DockerOperator:
         except docker.errors.DockerException as exc:
             self.logger.error('failed to start container %s', exc)
             success = False
-            return
+            container = None
 
         self.handle_old_containers(containers, success)
 

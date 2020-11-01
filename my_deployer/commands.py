@@ -48,10 +48,9 @@ def config(hostname: str, port: int, username: str, password: str):
 
 @click.command()
 @click.argument("url", type=str)
-@click.argument("service", type=str)
-@click.option("--name", type=str, required=False)
+@click.argument("services", type=str, nargs=-1)
 @click.option("--tag", type=str, required=False, default='latest')
-def build(url: str, service: str, name: str = None, tag: str = 'latest'):
+def build(url: str, services: str, tag: str = 'latest'):
     """Build the Service on the remote host."""
     # TODO: Add progressbar
     logger = build_logger('main')
@@ -59,20 +58,17 @@ def build(url: str, service: str, name: str = None, tag: str = 'latest'):
     logger.info('remote hostname=%s', infos.hostname)
     docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
-    # TODO: Build multiple services
-    service_path = Path(service)
-    if name is None:
+    for service in services:
+        service_path = Path(service)
         name = service_path.absolute().name
-        logger.info("using default name=%s", name)
-    docker_operator.build_service(service_path, name, tag=tag)
+        docker_operator.build_service(service_path, name, tag=tag)
 
 
 @click.command()
 @click.argument("url", type=str)
-@click.argument("service", type=str)
-@click.option("--container-name", type=str, required=False)
+@click.argument("services", type=str, nargs=-1)
 @click.option("--tag", type=str, required=False, default='latest')
-def deploy(url: str, service: str, container_name: str = None, tag: str = 'latest'):
+def deploy(url: str, services: str, tag: str = 'latest'):
     """Deploy the Service on the remote host."""
     # TODO: Add progressbar
     logger = build_logger('main')
@@ -81,8 +77,25 @@ def deploy(url: str, service: str, container_name: str = None, tag: str = 'lates
     docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
     # TODO: Build multiple services
-    docker_operator.run_container(
-        service,
-        image_tag=tag,
-        container_name=container_name,
-    )
+    for service in services:
+        service_path = Path(service).absolute()
+        image_name = service_path.name
+        docker_operator.run_container(
+            image_name,
+            image_tag=tag,
+        )
+
+
+@click.command()
+@click.argument("url", type=str)
+@click.argument("services", type=str, nargs=-1)
+def healthcheck(url: str, services: str):
+    """Ensure the running containers are healthy."""
+    # TODO: Add progressbar
+    logger = build_logger('main')
+    infos = DockerInfos(url)
+    logger.info('remote hostname=%s', infos.hostname)
+    docker_operator = DockerOperator(infos)
+    docker_operator.is_remote_reachable()
+    for service in services:
+        pass

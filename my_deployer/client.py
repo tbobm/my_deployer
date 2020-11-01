@@ -10,7 +10,7 @@
 """
 import click
 
-from my_deployer.commands import config, build, deploy
+from my_deployer.commands import config, build, deploy, healthcheck
 
 
 @click.group()
@@ -23,6 +23,7 @@ def run_cli():
     my_deployer.add_command(config)
     my_deployer.add_command(build)
     my_deployer.add_command(deploy)
+    my_deployer.add_command(healthcheck)
     my_deployer()
 
 
