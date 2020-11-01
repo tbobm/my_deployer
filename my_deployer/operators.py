@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 from pathlib import Path
 
 import docker
+from docker.models.containers import Container
 import paramiko
 
 from my_deployer.errors import MyDeployerError
@@ -75,7 +76,7 @@ class SSHOperator:
         self.logger.info('docker successfully installed')
         if add_current_user_to_docker_group:
             user = self.infos.username
-            self.logger.info('adding user=%s to docker group')
+            self.logger.info('adding user=%s to docker group', user)
             _, _ = self.execute_remote_command(
                 ADD_USER_TO_DOCKER_GROUP.format(username=user),
             )
@@ -85,6 +86,9 @@ class SSHOperator:
 
 class DockerOperator:
     """Execute Docker-related commands on the remote host."""
+    DEFAULT_LABELS = {
+        'management.tool': 'my_deployer',
+    }
 
     def __init__(self, url: str, logger: Optional[logging.Logger] = None):
         self.client = docker.DockerClient(url)
@@ -94,12 +98,40 @@ class DockerOperator:
             self.logger = build_logger(self.__class__.__name__)
         self.logger.info('setup DockerClient')
 
+    def is_remote_reachable(self) -> bool:
+        """Ping the remote Docker daemon."""
+        self.logger.info('ping remote target')
+        self.client.ping()
+        self.logger.info('remote target answered ping')
+        return True
+
     def build_service(self, path: Path, name: str, tag: str = 'latest'):
         """Build the Docker image using self.client."""
         self.logger.info('building from %s with %s:%s', path, name, tag)
-        image, _ = self.client.images.build(path=path, tag=f"{name}:{tag}")
+        image, _ = self.client.images.build(
+            path=path.absolute().as_posix(),
+            tag=f"{name}:{tag}",
+            labels=self.DEFAULT_LABELS,
+        )
         self.logger.info('successfully built service %s:%s (%s)', name, tag, image.id)
         self.logger.info('image=%s size=%d bytes', image.short_id, image.attrs.get('Size'))
 
-    def run_container(self, image_name: str, image_tag: str = 'latest'):
+    def run_container(self,
+                      image_name: str,
+                      image_tag: str = 'latest',
+                      container_name: Optional[str] = None) -> Container:
         """Run the container on the remote host."""
+        # TODO: find if container matching name:tag exists
+        self.logger.info('deploying %s:%s', image_name, image_tag)
+        container = self.client.containers.run(
+            f"{image_name}:{image_tag}",
+            detach=True,
+            name=container_name,
+            labels=self.DEFAULT_LABELS,
+        )  # type: Container
+        self.logger.info(
+            'started container id=%s name=%s',
+            container.id,
+            container.name,
+        )
+        return container
