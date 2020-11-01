@@ -12,7 +12,7 @@ from my_deployer.errors import MyDeployerError
 from my_deployer.utils import should_deploy_based_on_version
 from my_deployer.logs import build_logger
 from my_deployer.remote_commands import INSTALL_DOCKER, ADD_USER_TO_DOCKER_GROUP
-from my_deployer.structs import SSHInfos
+from my_deployer.structs import DockerInfos, SSHInfos
 
 
 GET_DOCKER_VERSION_CMD = 'docker -v'
@@ -95,8 +95,8 @@ class DockerOperator:
         'tag': 'my_deployer.app.tag',
     }
 
-    def __init__(self, url: str, logger: Optional[logging.Logger] = None):
-        self.client = docker.DockerClient(url)
+    def __init__(self, infos: DockerInfos, logger: Optional[logging.Logger] = None):
+        self.client = docker.DockerClient(infos.url)
         if logger is not None:
             self.logger = logger
         else:
