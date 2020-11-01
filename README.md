@@ -13,19 +13,72 @@ In order to support learning the basics of Containerization principles and start
 
 ## Usage
 
-**Write the code first!**
+```
+my_deployer --help
+Usage: my_deployer [OPTIONS] COMMAND [ARGS]...
 
-Config:
-> `my_deployer config <SSH_REMOTE_URL>`
+  Handy lightweight container deployment CLI program.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  build        Build the Service on the remote host.
+  config       Configure Docker on the remote host.
+  deploy       Deploy the Service on the remote host.
+  healthcheck  Ensure the running containers are healthy.
+```
+
+
+### Config:
+```
+my_deployer config --help
+Usage: my_deployer config [OPTIONS] HOSTNAME
+
+  Configure Docker on the remote host.
+
+Options:
+  --port INTEGER   SSH port to use.  [default: 22]
+  --username TEXT  Remote user username if required.
+  --password TEXT  Remote user password if required.
+  --help           Show this message and exit.
+```
 
 Build:
-> `my_deployer build <SSH_REMOTE_URL> [<SERVICE>]...`
+```
+my_deployer build --help
+Usage: my_deployer build [OPTIONS] URL [SERVICES]...
+
+  Build the Service on the remote host.
+
+Options:
+  --tag TEXT  Remote image tag for service(s) to build.
+  --help      Show this message and exit.
+```
 
 Deploy:
-> `my_deployer deploy <SSH_REMOTE_URL> <SERVICE>...`
+```
+my_deployer deploy --help
+Usage: my_deployer deploy [OPTIONS] URL [SERVICES]...
+
+  Deploy the Service on the remote host.
+
+Options:
+  --tag TEXT  Remote image tag for service(s) to deploy.  [default: latest]
+  --help      Show this message and exit.
+```
 
 Healthcheck:
-> `my_deployer healthcheck <REMOTE_IP> [<SERVICE>]...`
+```
+my_deployer healthcheck --help
+Usage: my_deployer healthcheck [OPTIONS] URL [SERVICES]...
+
+  Ensure the running containers are healthy.
+
+Options:
+  --restart  Restart unhealthy containers.  [default: False]
+  --help     Show this message and exit.
+```
 
 
 ## Features
