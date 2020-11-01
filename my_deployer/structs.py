@@ -1,5 +1,5 @@
 """Utility structures for My Deployer."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import typing
 
 
@@ -8,6 +8,5 @@ class SSHInfos:
     """Centralize SSH informations."""
     hostname: str
     username: typing.Optional[str]
-    password: typing.Optional[str]
+    password: typing.Optional[str] = field(repr=False)
     port: int = 22
-    # TODO: Edit repr to avoid showing password (replace by '*' ?)

@@ -10,7 +10,7 @@
 """
 import click
 
-from my_deployer.commands import config, build
+from my_deployer.commands import config, build, deploy
 
 
 @click.group()
@@ -22,6 +22,7 @@ def run_cli():
     """Execute the command using the CLI flags."""
     my_deployer.add_command(config)
     my_deployer.add_command(build)
+    my_deployer.add_command(deploy)
     my_deployer()
 
 
