@@ -60,10 +60,10 @@ With the user:
 > Deploy these images on the remote host by taking in account image version
 - Enable upgrading remote containers and reverting failing deployments
 
-- [ ] Enquire if the specified image is already deployed and which version -if any- it is using
-- [ ] Deploy the newly built image (or a specified one) if necessary
-- [ ] If an already built container exists, stop it and restore it if the one getting deployed fails
-- [ ] Delete previous container if the new one is succesful and healthy
+- [x] Enquire if the specified image is already deployed and which version -if any- it is using
+- [x] Deploy the newly built image (or a specified one) if necessary
+- [x] If an already built container exists, stop it and restore it if the one getting deployed fails
+- [x] Delete previous container if the new one is succesful and healthy
 
 ### Healthcheck
 
