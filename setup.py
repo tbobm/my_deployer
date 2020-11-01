@@ -4,7 +4,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 
-__version__ = "0.0.0"
+__version__ = "1.0.0"
 URL = "https://github.com/tbobm/my_deployer/archive/{}.tar.gz".format(__version__)
 
 setup(
