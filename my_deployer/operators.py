@@ -184,7 +184,7 @@ class DockerOperator:
     def run_container(self,
                       image_name: str,
                       image_tag: str = 'latest',
-                      container_name: Optional[str] = None) -> Container:
+                      container_name: Optional[str] = None) -> Optional[Container]:
         """Run the container on the remote host.
 
         - Look for existing containers (looking for similar `image_name`)
@@ -195,6 +195,8 @@ class DockerOperator:
         my_deployer tries to restore the previous containers.
         If the deployment goes as expected we delete the old containers.
         """
+        # TODO: assert targeted image exists
+
         # Look for existing containers
         containers = self.handle_running_containers(image_name, image_tag)
         target_image = f"{image_name}:{image_tag}"
@@ -220,9 +222,10 @@ class DockerOperator:
 
             # TODO: if healtcheck, wait for "healthy" or set success as False
             success = True
-        except docker.errors.DockerException:
-            self.logger.error('failed to start container')
+        except docker.errors.DockerException as exc:
+            self.logger.error('failed to start container %s', exc)
             success = False
+            return
 
         self.handle_old_containers(containers, success)
 
