@@ -56,12 +56,30 @@ def build(url: str, service: str, name: str = None, tag: str = 'latest'):
     logger = build_logger('main')
     # TODO: Add DockerInfos structure to display host
     docker_operator = DockerOperator(url)
-    logger.info('ping remote target')
-    docker_operator.client.ping()
-    logger.info('remote target answered ping')
+    docker_operator.is_remote_reachable()
     # TODO: Build multiple services
     service_path = Path(service)
     if name is None:
         name = service_path.absolute().name
         logger.info("using default name=%s", name)
     docker_operator.build_service(service_path, name, tag=tag)
+
+
+@click.command()
+@click.argument("url", type=str)
+@click.argument("service", type=str)
+@click.option("--container-name", type=str, required=False)
+@click.option("--tag", type=str, required=False, default='latest')
+def deploy(url: str, service: str, container_name: str = None, tag: str = 'latest'):
+    """Deploy the Service on the remote host."""
+    # TODO: Add progressbar
+    logger = build_logger('main')
+    # TODO: Add DockerInfos structure to display host
+    docker_operator = DockerOperator(url)
+    docker_operator.is_remote_reachable()
+    # TODO: Build multiple services
+    docker_operator.run_container(
+        service,
+        image_tag=tag,
+        container_name=container_name,
+    )
