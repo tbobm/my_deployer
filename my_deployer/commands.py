@@ -17,9 +17,26 @@ from my_deployer.structs import DockerInfos, SSHInfos
 
 @click.command()
 @click.argument("hostname", type=str)
-@click.option("--port", type=int, required=False, default=22)
-@click.option("--username", type=str, required=False)
-@click.option("--password", type=str, required=False)
+@click.option(
+    "--port",
+    type=int,
+    help='SSH port to use.',
+    show_default=True,
+    required=False,
+    default=22,
+)
+@click.option(
+    "--username",
+    help='Remote user username if required.',
+    type=str,
+    required=False,
+)
+@click.option(
+    "--password",
+    help='Remote user password if required.',
+    type=str,
+    required=False,
+)
 def config(hostname: str, port: int, username: str, password: str):
     """Configure Docker on the remote host."""
     logger = build_logger('main')
@@ -48,10 +65,15 @@ def config(hostname: str, port: int, username: str, password: str):
 
 @click.command()
 @click.argument("url", type=str)
-@click.argument("service", type=str)
-@click.option("--name", type=str, required=False)
-@click.option("--tag", type=str, required=False, default='latest')
-def build(url: str, service: str, name: str = None, tag: str = 'latest'):
+@click.argument("services", type=str, nargs=-1)
+@click.option(
+    "--tag",
+    type=str,
+    help='Remote image tag for service(s) to build.',
+    required=False,
+    default='latest',
+)
+def build(url: str, services: str, tag: str = 'latest'):
     """Build the Service on the remote host."""
     # TODO: Add progressbar
     logger = build_logger('main')
@@ -59,20 +81,24 @@ def build(url: str, service: str, name: str = None, tag: str = 'latest'):
     logger.info('remote hostname=%s', infos.hostname)
     docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
-    # TODO: Build multiple services
-    service_path = Path(service)
-    if name is None:
+    for service in services:
+        service_path = Path(service)
         name = service_path.absolute().name
-        logger.info("using default name=%s", name)
-    docker_operator.build_service(service_path, name, tag=tag)
+        docker_operator.build_service(service_path, name, tag=tag)
 
 
 @click.command()
 @click.argument("url", type=str)
-@click.argument("service", type=str)
-@click.option("--container-name", type=str, required=False)
-@click.option("--tag", type=str, required=False, default='latest')
-def deploy(url: str, service: str, container_name: str = None, tag: str = 'latest'):
+@click.argument("services", type=str, nargs=-1)
+@click.option(
+    "--tag",
+    type=str,
+    help='Remote image tag for service(s) to deploy.',
+    required=False,
+    show_default=True,
+    default='latest',
+)
+def deploy(url: str, services: str, tag: str = 'latest'):
     """Deploy the Service on the remote host."""
     # TODO: Add progressbar
     logger = build_logger('main')
@@ -81,8 +107,32 @@ def deploy(url: str, service: str, container_name: str = None, tag: str = 'lates
     docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
     # TODO: Build multiple services
-    docker_operator.run_container(
-        service,
-        image_tag=tag,
-        container_name=container_name,
-    )
+    for service in services:
+        service_path = Path(service).absolute()
+        image_name = service_path.name
+        docker_operator.run_container(
+            image_name,
+            image_tag=tag,
+        )
+
+
+@click.command()
+@click.argument("url", type=str)
+@click.argument("services", type=str, nargs=-1)
+@click.option(
+    "--restart",
+    type=bool,
+    help='Restart unhealthy containers.',
+    default=False,
+    is_flag=True,
+    show_default=True,
+)
+def healthcheck(url: str, services: str, restart: bool = False):
+    """Ensure the running containers are healthy."""
+    # TODO: Add progressbar
+    logger = build_logger('main')
+    infos = DockerInfos(url)
+    logger.info('remote hostname=%s', infos.hostname)
+    docker_operator = DockerOperator(infos)
+    docker_operator.is_remote_reachable()
+    docker_operator.list_healthy_containers(restart)
