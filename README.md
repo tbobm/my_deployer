@@ -11,6 +11,11 @@ In order to support learning the basics of Containerization principles and start
 - Enable upgrading remote containers and reverting failing deployments
 - Verify running container healthchecks and restart them if necessary
 
+## Installation
+
+- Clone this repository
+- `pip install .`
+
 ## Example
 
 ```bash
