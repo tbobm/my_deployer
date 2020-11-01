@@ -11,8 +11,8 @@ from pathlib import Path
 import click
 
 from my_deployer.logs import build_logger
-from my_deployer.operators import SSHOperator, DockerOperator
-from my_deployer.structs import SSHInfos
+from my_deployer.operators import DockerOperator, SSHOperator
+from my_deployer.structs import DockerInfos, SSHInfos
 
 
 @click.command()
@@ -24,6 +24,7 @@ def config(hostname: str, port: int, username: str, password: str):
     """Configure Docker on the remote host."""
     logger = build_logger('main')
     ssh_infos = SSHInfos(hostname, username, password, port=port)
+    logger.info('remote hostname=%s', ssh_infos.hostname)
     remote = SSHOperator(ssh_infos)
     logger.info('check if docker is installed')
     docker_installed = remote.is_docker_installed()
@@ -54,8 +55,9 @@ def build(url: str, service: str, name: str = None, tag: str = 'latest'):
     """Build the Service on the remote host."""
     # TODO: Add progressbar
     logger = build_logger('main')
-    # TODO: Add DockerInfos structure to display host
-    docker_operator = DockerOperator(url)
+    infos = DockerInfos(url)
+    logger.info('remote hostname=%s', infos.hostname)
+    docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
     # TODO: Build multiple services
     service_path = Path(service)
@@ -74,8 +76,9 @@ def deploy(url: str, service: str, container_name: str = None, tag: str = 'lates
     """Deploy the Service on the remote host."""
     # TODO: Add progressbar
     logger = build_logger('main')
-    # TODO: Add DockerInfos structure to display host
-    docker_operator = DockerOperator(url)
+    infos = DockerInfos(url)
+    logger.info('remote hostname=%s', infos.hostname)
+    docker_operator = DockerOperator(infos)
     docker_operator.is_remote_reachable()
     # TODO: Build multiple services
     docker_operator.run_container(

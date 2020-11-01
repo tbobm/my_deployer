@@ -24,6 +24,16 @@ def test_ssh_struct():
     assert infos.hostname == '127.0.0.1'
 
 
+def test_docker_struct():
+    """Ensure DockerInfos integrity."""
+    docker_url = "ssh://vagrant@localhost:2222"
+    infos = structs.DockerInfos(docker_url)
+    assert infos is not None
+    assert infos.scheme == "ssh"
+    assert infos.url == docker_url
+    assert infos.hostname == 'localhost'
+
+
 @pytest.mark.parametrize('reference,target,allow_eq,expected', [
     ('1.0.0', '2.0.0', True, True),
     ('v1.0.0', '1.1.0', True, True),
