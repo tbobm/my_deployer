@@ -1,5 +1,7 @@
 # My Deployer
 
+[![Base CI](https://github.com/tbobm/my_deployer/actions/workflows/main.yml/badge.svg)](https://github.com/tbobm/my_deployer/actions/workflows/main.yml)
+
 _A lightweight container deployment solution, written in Python._
 
 ## Goal
